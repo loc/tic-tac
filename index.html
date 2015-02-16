@@ -36,10 +36,10 @@
 				body = document.querySelector('body'),
 				endPrompt = document.querySelector('.end');
 
-			body.style.visibility = "visible";
-
 			// setup board
 			createBoard(board);
+
+			body.style.visibility = "visible";
 
 			// watch for hint keypress
 			document.addEventListener('keyup', function(e) {
