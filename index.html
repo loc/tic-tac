@@ -1,0 +1,116 @@
+<html>
+	<head>
+		<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js'></script>
+		<script type='text/javascript' src='tictactoe.js'></script>
+		<script type='text/javascript'>
+		var size = 3,
+			hintTimeout,
+			gameOver,
+			gameOverResponse = {
+				'-1': 'You won. How did you do that?',
+				0: 'Draw. Good work!',
+				1: 'You lost. Typical.'
+			},
+
+			createBoard = function(parent) {
+				var n = size * size,
+					i;
+
+				parent.innerHTML = '';
+				for (i=0; i < n; i++) {
+					node = document.createElement('li');
+					parent.appendChild(node);
+				}
+			},
+			waitToShowHint = function() {
+				var hint = document.querySelector('.hint');
+				hint.className = 'hint';
+				clearTimeout(hintTimeout);
+				hintTimeout = setTimeout(function() {
+					if (gameOver) return;
+					hint.className += ' show';
+				}, 5 * 1000);
+			};
+
+		window.onload = function() {
+			var board = document.querySelector('.board'),
+				body = document.querySelector('body'),
+				endPrompt = document.querySelector('.end');
+
+			// setup board
+			createBoard(board);
+
+			// watch for hint keypress
+			document.addEventListener('keyup', function(e) {
+				var node;
+				// if user pressed "h" key
+				if (!gameOver && e.keyCode === 72) {
+					node = board.children[tictactoe.hint()];
+					node.className = "";
+					// trigger reflow. whatta hack.
+					node.offsetWidth = node.offsetWidth;
+					node.className = "flash";
+				}
+			});
+
+			// record user move
+			board.addEventListener('click', function(e) {
+				var node = e.target;
+
+				if (!gameOver && node.nodeName.toLowerCase() === 'li' && (node.className !== 'x' || node.className !== 'o')) {
+					var response;
+
+					node.className = 'o';
+
+					waitToShowHint();
+
+					// tell application about our move
+					tictactoe.humanMoveAtIndex(Array.prototype.indexOf.call(node.parentNode.children, node));
+
+					response = tictactoe.computerMove();
+					if (response !== undefined) {
+						// get computer move in response
+						board.children[response].className = 'x';
+					}
+				}
+			});
+
+			// watch for game end
+			tictactoe.registerGameOverCallback(function(state) {
+				gameOver = true;
+				board.className += " hide";
+				document.querySelector('.outcome').innerHTML = gameOverResponse[state];
+				endPrompt.className += " show";
+				body.className = 'game-over';
+			});
+
+			// reset if click and gameover
+			document.addEventListener('mousedown', function() {
+				if (gameOver) {
+					createBoard(board);
+					body.className = '';
+					board.className = 'board';
+					endPrompt.className = 'end';
+					gameOver = false;
+					tictactoe.reset();
+					clearTimeout(hintTimeout);
+				}
+			});
+
+		};
+		</script>
+		<link rel="stylesheet" href="tic.css">
+	</head>
+
+	<body>
+		<div class='end'>
+			<h1>Game Over!</h1>
+			<h2 class='outcome'></h2>
+			<a class='reset'>Click to play again.</a>
+		</div>
+		<ul class='board'>
+						
+		</ul>
+		<span class='hint'>Need a hint? Press the &ldquo;h&rdquo; key.</span>
+	</body>
+</html>
