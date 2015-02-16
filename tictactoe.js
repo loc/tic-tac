@@ -72,9 +72,9 @@
 			score = gameOver;
 		}
 
-		_.every(moves, function(move, i) {
+		moves.every(function(move, i) {
 			// need deep copies
-			var newBoard = _.map(tree.board, _.clone),
+			var newBoard = tree.board.map(function(val){return Array.prototype.slice.apply(val);}),
 				reducedMoves = moves.slice(0, i).concat(moves.slice(i+1)),
 				node = {};
 
@@ -195,7 +195,7 @@
 		var state = gameOverState();
 
 		if (state !== undefined) {
-			_.each(gameState.gameOverCallbacks, function(cb) {
+			gameState.gameOverCallbacks.forEach(function(cb) {
 				cb(state);
 			});
 		}
@@ -264,6 +264,3 @@ tictactoe = {
 reset();
 
 })();
-
-
-
