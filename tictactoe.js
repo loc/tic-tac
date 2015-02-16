@@ -158,6 +158,11 @@
 
 		return false;
 	},
+	/**
+	 * Determines computer win (1) computer loss (-1) or draw (0)
+	 * 
+	 * @return {Integer} i ∈ {-1, 0, 1}
+	 */
 	gameOverState = function() {
 		var winner = evalBoard(gameState.board);
 
@@ -180,10 +185,14 @@
 		checkGameOver();
 	},
 
+	/**
+	 * Calls all of the gameOverCallbacks if the 
+	 * game has ended
+	 *  
+	 * @return {void}
+	 */
 	checkGameOver = function() {
 		var state = gameOverState();
-
-		console.log(state);
 
 		if (state !== undefined) {
 			_.each(gameState.gameOverCallbacks, function(cb) {
@@ -192,6 +201,12 @@
 		}
 	},
 
+	/**
+	 * Computes the best move for the human player
+	 * out of the goodness of the AI's heart.
+	 * 
+	 * @return {Integer} a sequential index
+	 */
 	hint = function() {
 		var possible = genBoards({board: gameState.board, children: {}}, -1, null, -Infinity, Infinity),
 			move = possible.bestMove;
@@ -201,6 +216,13 @@
 		}
 	},
 
+	/**
+	 * Registers a callback to be run when the game
+	 * ends. The state (0, 1, -1) is passed to each callback
+	 * 
+	 * @param  {Function} cb
+	 * @return {void}
+	 */
 	registerGameOverCallback = function(cb) {
 		gameState.gameOverCallbacks.push(cb);
 	},
@@ -220,11 +242,16 @@
 		}
 	},
 
+	/**
+	 * Resets the game board.
+	 * @return {void}
+	 */
 	reset = function() {
 		gameState.board = [Array(3), Array(3), Array(3)];
 	};
 
 
+// publicly exposed methods
 tictactoe = {
 	registerGameOverCallback: registerGameOverCallback,
 	computerMove: computerMove,
@@ -233,6 +260,7 @@ tictactoe = {
 	reset: reset
 };
 
+// initial board setup
 reset();
 
 })();
