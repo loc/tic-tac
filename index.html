@@ -39,8 +39,6 @@
 			// setup board
 			createBoard(board);
 
-			body.style.visibility = "visible";
-
 			// watch for hint keypress
 			document.addEventListener('keyup', function(e) {
 				var node;
@@ -97,6 +95,10 @@
 					clearTimeout(hintTimeout);
 				}
 			});
+
+			setTimeout(function() {
+				body.style.visibility = "visible";
+			}, 100);
 
 		};
 		</script>
